@@ -31,7 +31,9 @@ const TodoList = ({ setIsAuthenticated}) => {
         if(!token){
             navigate('/login');
         }
-        setIsAuthenticated(true);
+        if(token){
+            setIsAuthenticated(true);
+        }
         console.log(token);
         setToken(token);
     }, []);
