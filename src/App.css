@@ -1,0 +1,17 @@
+
+
+.circular-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(220,220,220,1) 60%, rgba(240,240,240,1) 100%);
+  z-index: -1;
+}
+
+.content {
+  z-index: 1;
+}
+
+
