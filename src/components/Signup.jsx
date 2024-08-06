@@ -66,7 +66,7 @@ export default function Signup() {
             </Typography>
             <Input
               size="lg"
-              placeholder="name@mail.com"
+              placeholder="Name"
               className=" !border-gray-500 focus:!border-gray-300"
               labelProps={{
                 className: "before:content-none after:content-none",
