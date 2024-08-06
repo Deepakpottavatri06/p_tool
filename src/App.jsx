@@ -7,6 +7,8 @@ import Signup from './components/Signup'
 import Login from './components/Login'
 import {useState} from 'react';
 import TodoList from './components/TodoList';
+import Unknown from './components/Unknown';
+
 const PrivateRoute = ({ isAuthenticated, children }) => {
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
@@ -25,11 +27,12 @@ export default function App() {
               <Route
                   path="/todos"
                   element={
-                      <PrivateRoute isAuthenticated={isAuthenticated}>
-                          <TodoList />
-                      </PrivateRoute>
+                      // <PrivateRoute isAuthenticated={isAuthenticated}>
+                          <TodoList  setIsAuthenticated = {setIsAuthenticated} />
+                      // </PrivateRoute>
                   }
               />
+              <Route path="*" element = {<Unknown />} />
           </Routes>
       </div>
       </>

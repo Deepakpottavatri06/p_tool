@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Loader() {
   return (
-    <div className='h-screen w-screen flex justify-center align-center z-10'>
+    <div className='h-screen w-screen flex justify-center align-center z-10 mt-40'>
          <svg class="w-12 h-12 text-gray-300 animate-spin" viewBox="0 0 64 64" fill="none"
       xmlns="http://www.w3.org/2000/svg" width="24" height="24">
       <path

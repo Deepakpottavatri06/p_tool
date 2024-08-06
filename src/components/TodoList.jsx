@@ -15,14 +15,26 @@ import {
     Textarea
 }
     from "@material-tailwind/react";
+import Unknown from './Unknown';
+import { useNavigate } from 'react-router-dom';
 
-
-const TodoList = () => {
+const TodoList = ({ setIsAuthenticated}) => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen((cur) => !cur);
     const [todos, setTodos] = useState([]);
     const [newTodo, setNewTodo] = useState({ title: '', description: '' });
     const [token, setToken] = useState(sessionStorage.getItem('token'));
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = sessionStorage.getItem('token');
+        if(!token){
+            navigate('/login');
+        }
+        setIsAuthenticated(true);
+        console.log(token);
+        setToken(token);
+    }, []);
 
     useEffect(() => {
         const fetchTodos = async () => {
