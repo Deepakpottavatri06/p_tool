@@ -4,6 +4,15 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import SuprSendInbox from "@suprsend/react-inbox";
 import axios from 'axios';
+const lightColors = {
+  primary: '#007bff',
+  primaryText: '#212529',
+  secondaryText: '#6c757d',
+  border: '#dee2e6',
+  main: '#ffffff',
+  error: '#dc3545'
+}
+
 
 const sampleLightTheme = {
   bell: { color: '#0000ff' },
