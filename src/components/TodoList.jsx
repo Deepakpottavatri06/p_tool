@@ -1,7 +1,6 @@
 // src/components/TodoList.jsx
 import React, { useState, useEffect } from 'react';
 import { createTodo, getTodos, updateTodo, deleteTodo } from '../api/todo';
-
 import {
     Button,
     Dialog,
@@ -13,14 +12,13 @@ import {
     Input,
     Checkbox,
     Textarea
-}
-    from "@material-tailwind/react";
-import Unknown from './Unknown';
+} from "@material-tailwind/react";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const TodoList = ({ setIsAuthenticated}) => {
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen((cur) => !cur);
+const TodoList = ({ setIsAuthenticated }) => {
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(!open);
     const [todos, setTodos] = useState([]);
     const [newTodo, setNewTodo] = useState({ title: '', description: '' });
     const [token, setToken] = useState(sessionStorage.getItem('token'));
@@ -28,38 +26,55 @@ const TodoList = ({ setIsAuthenticated}) => {
 
     useEffect(() => {
         const token = sessionStorage.getItem('token');
-        if(!token){
+        if (!token) {
             navigate('/login');
-        }
-        if(token){
+        } else {
             setIsAuthenticated(true);
         }
-        console.log(token);
         setToken(token);
-    }, []);
+    }, [navigate, setIsAuthenticated]);
 
     useEffect(() => {
         const fetchTodos = async () => {
-            const result = await getTodos(token);
-            setTodos(result.data);
+            try {
+                const result = await getTodos(token);
+                setTodos(result.data);
+            } catch (error) {
+                console.error('Error fetching todos:', error);
+            }
         };
-        fetchTodos();
+        if (token) fetchTodos();
     }, [token]);
 
     const handleCreateTodo = async () => {
-        const result = await createTodo(newTodo, token);
-        setTodos([...todos, result.data]);
-        setNewTodo({ title: '', description: '' });
+        try {
+            // Trigger notification
+            await axios.post("https://p-tool-backend.vercel.app/api/subid/trigger", { email: sessionStorage.getItem("email") });
+            const result = await createTodo(newTodo, token);
+            setTodos([...todos, result.data]);
+            setNewTodo({ title: '', description: '' });
+            handleOpen();  // Close the dialog after adding todo
+        } catch (error) {
+            console.error('Error creating todo:', error);
+        }
     };
 
     const handleUpdateTodo = async (id, updatedTodo) => {
-        const result = await updateTodo(id, updatedTodo, token);
-        setTodos(todos.map(todo => todo._id === id ? result.data : todo));
+        try {
+            const result = await updateTodo(id, updatedTodo, token);
+            setTodos(todos.map(todo => todo._id === id ? result.data : todo));
+        } catch (error) {
+            console.error('Error updating todo:', error);
+        }
     };
 
     const handleDeleteTodo = async (id) => {
-        await deleteTodo(id, token);
-        setTodos(todos.filter(todo => todo._id !== id));
+        try {
+            await deleteTodo(id, token);
+            setTodos(todos.filter(todo => todo._id !== id));
+        } catch (error) {
+            console.error('Error deleting todo:', error);
+        }
     };
 
     return (
@@ -85,15 +100,12 @@ const TodoList = ({ setIsAuthenticated}) => {
                         <Typography className="-mb-2" variant="h6">
                             Description
                         </Typography>
-                        <Textarea label="description" value={newTodo.description}
-                            onChange={e => setNewTodo({ ...newTodo, description: e.target.value })} />
-
+                        <Textarea label="description" value={newTodo.description} onChange={e => setNewTodo({ ...newTodo, description: e.target.value })} />
                     </CardBody>
                     <CardFooter className="pt-0">
-                        <Button variant="gradient" onClick={() => { handleOpen(); handleCreateTodo(); }} fullWidth>
+                        <Button variant="gradient" onClick={handleCreateTodo} fullWidth>
                             Add
                         </Button>
-
                     </CardFooter>
                 </Card>
             </Dialog>
@@ -101,11 +113,11 @@ const TodoList = ({ setIsAuthenticated}) => {
             <ul className='flex gap-2 flex-wrap justify-center items-center'>
                 {todos.map(todo => (
                     <li key={todo._id}>
-                        <Card className="mt-6 w-96 p-0">
+                        <Card className="mt-6 w-96 p-0 z-0">
                             <CardBody>
                                 <Typography variant="h5" color="blue-gray" className="mb-2">
                                     {todo.title}
-                                    <Checkbox onChange={() => handleUpdateTodo(todo._id, { ...todo, completed: !todo.completed })}/>
+                                    <Checkbox checked={todo.completed} onChange={() => handleUpdateTodo(todo._id, { ...todo, completed: !todo.completed })} />
                                 </Typography>
                                 <Typography>
                                     {todo.description}
@@ -116,7 +128,6 @@ const TodoList = ({ setIsAuthenticated}) => {
                             </CardFooter>
                         </Card>
                     </li>
-
                 ))}
             </ul>
         </div>

@@ -26,6 +26,7 @@ export default function Login({ logset }) {
       console.log(response);
 
       sessionStorage.setItem("token", response.data.token);
+      sessionStorage.setItem("email", email);
       logset(true);
       navigate("/todos");
     } catch (err) {
